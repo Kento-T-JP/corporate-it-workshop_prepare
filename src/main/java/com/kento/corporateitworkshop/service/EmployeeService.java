@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.kento.corporateitworkshop.dto.CreateEmployeeRequest;
 import com.kento.corporateitworkshop.dto.EmployeeResponse;
+import com.kento.corporateitworkshop.dto.UpdateEmployeeRequest;
 import com.kento.corporateitworkshop.entity.Employee;
 import com.kento.corporateitworkshop.exception.EmployeeNotFoundException;
 import com.kento.corporateitworkshop.repository.EmployeeRepository;
@@ -33,6 +34,16 @@ public class EmployeeService {
 
 	public EmployeeResponse create(CreateEmployeeRequest request) {
 		Employee employee = new Employee(request.name(), request.department());
+		Employee savedEmployee = employeeRepository.save(employee);
+
+		return toResponse(savedEmployee);
+	}
+
+	public EmployeeResponse update(Long id, UpdateEmployeeRequest request) {
+		Employee employee = employeeRepository.findById(id)
+			.orElseThrow(() -> new EmployeeNotFoundException(id));
+
+		employee.update(request.name(), request.department());
 		Employee savedEmployee = employeeRepository.save(employee);
 
 		return toResponse(savedEmployee);

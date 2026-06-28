@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import com.kento.corporateitworkshop.dto.CreateEmployeeRequest;
 import com.kento.corporateitworkshop.dto.EmployeeResponse;
+import com.kento.corporateitworkshop.dto.UpdateEmployeeRequest;
 import com.kento.corporateitworkshop.entity.Employee;
 import com.kento.corporateitworkshop.exception.EmployeeNotFoundException;
 import com.kento.corporateitworkshop.repository.EmployeeRepository;
@@ -74,5 +75,29 @@ class EmployeeServiceTest {
 
 		assertThat(employee.name()).isEqualTo("Peach");
 		assertThat(employee.department()).isEqualTo("IT Strategy");
+	}
+
+	@Test
+	void updateChangesEmployeeAndReturnsResponse() {
+		Employee employee = new Employee("Mario", "Corporate IT");
+		UpdateEmployeeRequest request = new UpdateEmployeeRequest("Mario", "IT Platform");
+
+		when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
+		when(employeeRepository.save(employee)).thenReturn(employee);
+
+		EmployeeResponse updatedEmployee = employeeService.update(1L, request);
+
+		assertThat(updatedEmployee.name()).isEqualTo("Mario");
+		assertThat(updatedEmployee.department()).isEqualTo("IT Platform");
+	}
+
+	@Test
+	void updateThrowsExceptionWhenEmployeeDoesNotExist() {
+		UpdateEmployeeRequest request = new UpdateEmployeeRequest("Mario", "IT Platform");
+		when(employeeRepository.findById(999L)).thenReturn(Optional.empty());
+
+		assertThatThrownBy(() -> employeeService.update(999L, request))
+			.isInstanceOf(EmployeeNotFoundException.class)
+			.hasMessage("Employee not found. id=999");
 	}
 }

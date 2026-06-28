@@ -35,4 +35,9 @@ public class Employee {
 	public String getDepartment() {
 		return department;
 	}
+
+	public void update(String name, String department) {
+		this.name = name;
+		this.department = department;
+	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.kento.corporateitworkshop.dto.CreateEmployeeRequest;
 import com.kento.corporateitworkshop.dto.EmployeeResponse;
+import com.kento.corporateitworkshop.dto.UpdateEmployeeRequest;
 import com.kento.corporateitworkshop.service.EmployeeService;
 
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,5 +44,13 @@ public class EmployeeController {
 		return ResponseEntity
 			.created(URI.create("/employees/" + employee.id()))
 			.body(employee);
+	}
+
+	@PutMapping("/employees/{id}")
+	public EmployeeResponse update(
+		@PathVariable Long id,
+		@Valid @RequestBody UpdateEmployeeRequest request
+	) {
+		return employeeService.update(id, request);
 	}
 }

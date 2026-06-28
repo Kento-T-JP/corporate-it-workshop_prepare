@@ -34,4 +34,20 @@ class EmployeeRepositoryTest {
 	void findByIdReturnsEmptyWhenEmployeeDoesNotExist() {
 		assertThat(employeeRepository.findById(999L)).isEmpty();
 	}
+
+	@Test
+	void updatesEmployee() {
+		Employee savedEmployee = employeeRepository.save(new Employee("Mario", "Corporate IT"));
+
+		savedEmployee.update("Mario", "IT Platform");
+		employeeRepository.save(savedEmployee);
+
+		assertThat(employeeRepository.findById(savedEmployee.getId()))
+			.isPresent()
+			.get()
+			.satisfies(employee -> {
+				assertThat(employee.getName()).isEqualTo("Mario");
+				assertThat(employee.getDepartment()).isEqualTo("IT Platform");
+			});
+	}
 }

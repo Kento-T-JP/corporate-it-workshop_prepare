@@ -3,6 +3,7 @@ package com.kento.corporateitworkshop.controller;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import com.kento.corporateitworkshop.dto.CreateEmployeeRequest;
 import com.kento.corporateitworkshop.dto.EmployeeResponse;
+import com.kento.corporateitworkshop.dto.UpdateEmployeeRequest;
 import com.kento.corporateitworkshop.exception.EmployeeNotFoundException;
 import com.kento.corporateitworkshop.service.EmployeeService;
 
@@ -112,5 +114,58 @@ class EmployeeControllerTest {
 			.andExpect(jsonPath("$.message").value("Request validation failed."))
 			.andExpect(jsonPath("$.fieldErrors[0].field").value("name"))
 			.andExpect(jsonPath("$.fieldErrors[0].message").value("must not be blank"));
+	}
+
+	@Test
+	void updateReturnsUpdatedEmployee() throws Exception {
+		when(employeeService.update(1L, new UpdateEmployeeRequest("Mario", "IT Platform")))
+			.thenReturn(new EmployeeResponse(1L, "Mario", "IT Platform"));
+
+		mockMvc.perform(put("/employees/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+					{
+						"name": "Mario",
+						"department": "IT Platform"
+					}
+					"""))
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.id").value(1))
+			.andExpect(jsonPath("$.name").value("Mario"))
+			.andExpect(jsonPath("$.department").value("IT Platform"));
+	}
+
+	@Test
+	void updateReturnsNotFoundWhenEmployeeDoesNotExist() throws Exception {
+		when(employeeService.update(999L, new UpdateEmployeeRequest("Mario", "IT Platform")))
+			.thenThrow(new EmployeeNotFoundException(999L));
+
+		mockMvc.perform(put("/employees/999")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+					{
+						"name": "Mario",
+						"department": "IT Platform"
+					}
+					"""))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.code").value("EMPLOYEE_NOT_FOUND"))
+			.andExpect(jsonPath("$.message").value("Employee not found. id=999"));
+	}
+
+	@Test
+	void updateReturnsBadRequestWhenDepartmentIsBlank() throws Exception {
+		mockMvc.perform(put("/employees/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+					{
+						"name": "Mario",
+						"department": ""
+					}
+					"""))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+			.andExpect(jsonPath("$.fieldErrors[0].field").value("department"));
 	}
 }
