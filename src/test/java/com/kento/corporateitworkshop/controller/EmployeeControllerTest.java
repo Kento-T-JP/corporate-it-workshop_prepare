@@ -79,6 +79,10 @@ class EmployeeControllerTest {
 						"department": "IT Strategy"
 					}
 					"""))
-			.andExpect(status().isBadRequest());
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+			.andExpect(jsonPath("$.message").value("Request validation failed."))
+			.andExpect(jsonPath("$.fieldErrors[0].field").value("name"))
+			.andExpect(jsonPath("$.fieldErrors[0].message").value("must not be blank"));
 	}
 }
