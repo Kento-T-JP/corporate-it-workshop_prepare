@@ -2,7 +2,7 @@ package com.kento.corporateitworkshop.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Map;
+import com.kento.corporateitworkshop.dto.HealthResponse;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,8 +12,8 @@ class HealthServiceTest {
 
 	@Test
 	void getHealthStatusReturnsUp() {
-		Map<String, String> healthStatus = healthService.getHealthStatus();
+		HealthResponse healthStatus = healthService.getHealthStatus();
 
-		assertThat(healthStatus).containsEntry("status", "UP");
+		assertThat(healthStatus.status()).isEqualTo("UP");
 	}
 }

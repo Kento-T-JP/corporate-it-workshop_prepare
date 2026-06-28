@@ -1,13 +1,13 @@
 package com.kento.corporateitworkshop.service;
 
-import java.util.Map;
+import com.kento.corporateitworkshop.dto.HealthResponse;
 
 import org.springframework.stereotype.Service;
 
 @Service
 public class HealthService {
 
-	public Map<String, String> getHealthStatus() {
-		return Map.of("status", "UP");
+	public HealthResponse getHealthStatus() {
+		return new HealthResponse("UP");
 	}
 }

@@ -1,7 +1,6 @@
 package com.kento.corporateitworkshop.controller;
 
-import java.util.Map;
-
+import com.kento.corporateitworkshop.dto.HealthResponse;
 import com.kento.corporateitworkshop.service.HealthService;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,7 @@ public class HealthController {
 	}
 
 	@GetMapping("/health")
-	public Map<String, String> health() {
+	public HealthResponse health() {
 		return healthService.getHealthStatus();
 	}
 }

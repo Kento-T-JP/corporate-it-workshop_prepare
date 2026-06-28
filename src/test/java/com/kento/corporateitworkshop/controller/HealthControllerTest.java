@@ -6,8 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Map;
-
+import com.kento.corporateitworkshop.dto.HealthResponse;
 import com.kento.corporateitworkshop.service.HealthService;
 
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,7 @@ class HealthControllerTest {
 
 	@Test
 	void healthReturnsUp() throws Exception {
-		when(healthService.getHealthStatus()).thenReturn(Map.of("status", "UP"));
+		when(healthService.getHealthStatus()).thenReturn(new HealthResponse("UP"));
 
 		mockMvc.perform(get("/health"))
 			.andExpect(status().isOk())
