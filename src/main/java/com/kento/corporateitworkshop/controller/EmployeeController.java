@@ -1,11 +1,18 @@
 package com.kento.corporateitworkshop.controller;
 
+import java.net.URI;
 import java.util.List;
 
+import com.kento.corporateitworkshop.dto.CreateEmployeeRequest;
 import com.kento.corporateitworkshop.dto.EmployeeResponse;
 import com.kento.corporateitworkshop.service.EmployeeService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,5 +27,14 @@ public class EmployeeController {
 	@GetMapping("/employees")
 	public List<EmployeeResponse> findAll() {
 		return employeeService.findAll();
+	}
+
+	@PostMapping("/employees")
+	public ResponseEntity<EmployeeResponse> create(@Valid @RequestBody CreateEmployeeRequest request) {
+		EmployeeResponse employee = employeeService.create(request);
+
+		return ResponseEntity
+			.created(URI.create("/employees/" + employee.id()))
+			.body(employee);
 	}
 }
