@@ -1,14 +1,17 @@
 package com.kento.corporateitworkshop.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.kento.corporateitworkshop.dto.CreateEmployeeRequest;
 import com.kento.corporateitworkshop.dto.EmployeeResponse;
 import com.kento.corporateitworkshop.entity.Employee;
+import com.kento.corporateitworkshop.exception.EmployeeNotFoundException;
 import com.kento.corporateitworkshop.repository.EmployeeRepository;
 
 import org.junit.jupiter.api.Test;
@@ -38,6 +41,26 @@ class EmployeeServiceTest {
 		assertThat(employees)
 			.extracting(EmployeeResponse::name)
 			.containsExactly("Mario", "Luigi");
+	}
+
+	@Test
+	void findByIdReturnsEmployeeResponse() {
+		when(employeeRepository.findById(1L))
+			.thenReturn(Optional.of(new Employee("Mario", "Corporate IT")));
+
+		EmployeeResponse employee = employeeService.findById(1L);
+
+		assertThat(employee.name()).isEqualTo("Mario");
+		assertThat(employee.department()).isEqualTo("Corporate IT");
+	}
+
+	@Test
+	void findByIdThrowsExceptionWhenEmployeeDoesNotExist() {
+		when(employeeRepository.findById(999L)).thenReturn(Optional.empty());
+
+		assertThatThrownBy(() -> employeeService.findById(999L))
+			.isInstanceOf(EmployeeNotFoundException.class)
+			.hasMessage("Employee not found. id=999");
 	}
 
 	@Test

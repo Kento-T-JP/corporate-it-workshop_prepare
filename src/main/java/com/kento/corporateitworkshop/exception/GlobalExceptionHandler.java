@@ -32,4 +32,15 @@ public class GlobalExceptionHandler {
 
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	}
+
+	@ExceptionHandler(EmployeeNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleEmployeeNotFound(EmployeeNotFoundException exception) {
+		ErrorResponse response = new ErrorResponse(
+			"EMPLOYEE_NOT_FOUND",
+			exception.getMessage(),
+			List.of()
+		);
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+	}
 }

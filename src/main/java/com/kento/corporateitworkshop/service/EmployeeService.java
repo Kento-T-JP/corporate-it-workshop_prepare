@@ -5,6 +5,7 @@ import java.util.List;
 import com.kento.corporateitworkshop.dto.CreateEmployeeRequest;
 import com.kento.corporateitworkshop.dto.EmployeeResponse;
 import com.kento.corporateitworkshop.entity.Employee;
+import com.kento.corporateitworkshop.exception.EmployeeNotFoundException;
 import com.kento.corporateitworkshop.repository.EmployeeRepository;
 
 import org.springframework.stereotype.Service;
@@ -22,6 +23,12 @@ public class EmployeeService {
 		return employeeRepository.findAll().stream()
 			.map(this::toResponse)
 			.toList();
+	}
+
+	public EmployeeResponse findById(Long id) {
+		return employeeRepository.findById(id)
+			.map(this::toResponse)
+			.orElseThrow(() -> new EmployeeNotFoundException(id));
 	}
 
 	public EmployeeResponse create(CreateEmployeeRequest request) {

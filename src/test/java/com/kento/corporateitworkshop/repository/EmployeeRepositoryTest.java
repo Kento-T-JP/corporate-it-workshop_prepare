@@ -29,4 +29,9 @@ class EmployeeRepositoryTest {
 				assertThat(employee.getDepartment()).isEqualTo("IT Strategy");
 			});
 	}
+
+	@Test
+	void findByIdReturnsEmptyWhenEmployeeDoesNotExist() {
+		assertThat(employeeRepository.findById(999L)).isEmpty();
+	}
 }

@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.kento.corporateitworkshop.dto.CreateEmployeeRequest;
 import com.kento.corporateitworkshop.dto.EmployeeResponse;
+import com.kento.corporateitworkshop.exception.EmployeeNotFoundException;
 import com.kento.corporateitworkshop.service.EmployeeService;
 
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,33 @@ class EmployeeControllerTest {
 			.andExpect(jsonPath("$[1].id").value(2))
 			.andExpect(jsonPath("$[1].name").value("Luigi"))
 			.andExpect(jsonPath("$[1].department").value("Information Systems"));
+	}
+
+	@Test
+	void findByIdReturnsEmployee() throws Exception {
+		when(employeeService.findById(1L))
+			.thenReturn(new EmployeeResponse(1L, "Mario", "Corporate IT"));
+
+		mockMvc.perform(get("/employees/1"))
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.id").value(1))
+			.andExpect(jsonPath("$.name").value("Mario"))
+			.andExpect(jsonPath("$.department").value("Corporate IT"));
+	}
+
+	@Test
+	void findByIdReturnsNotFoundWhenEmployeeDoesNotExist() throws Exception {
+		when(employeeService.findById(999L))
+			.thenThrow(new EmployeeNotFoundException(999L));
+
+		mockMvc.perform(get("/employees/999"))
+			.andExpect(status().isNotFound())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.code").value("EMPLOYEE_NOT_FOUND"))
+			.andExpect(jsonPath("$.message").value("Employee not found. id=999"))
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors").isEmpty());
 	}
 
 	@Test
