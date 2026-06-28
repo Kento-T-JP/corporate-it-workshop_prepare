@@ -2,14 +2,22 @@ package com.kento.corporateitworkshop.controller;
 
 import java.util.Map;
 
+import com.kento.corporateitworkshop.service.HealthService;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HealthController {
 
+	private final HealthService healthService;
+
+	public HealthController(HealthService healthService) {
+		this.healthService = healthService;
+	}
+
 	@GetMapping("/health")
 	public Map<String, String> health() {
-		return Map.of("status", "UP");
+		return healthService.getHealthStatus();
 	}
 }
