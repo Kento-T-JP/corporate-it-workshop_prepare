@@ -50,4 +50,13 @@ class EmployeeRepositoryTest {
 				assertThat(employee.getDepartment()).isEqualTo("IT Platform");
 			});
 	}
+
+	@Test
+	void deletesEmployee() {
+		Employee savedEmployee = employeeRepository.save(new Employee("Toad", "IT Support"));
+
+		employeeRepository.delete(savedEmployee);
+
+		assertThat(employeeRepository.findById(savedEmployee.getId())).isEmpty();
+	}
 }

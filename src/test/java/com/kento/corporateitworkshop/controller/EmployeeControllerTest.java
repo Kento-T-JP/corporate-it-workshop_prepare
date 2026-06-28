@@ -1,6 +1,8 @@
 package com.kento.corporateitworkshop.controller;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -167,5 +169,25 @@ class EmployeeControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
 			.andExpect(jsonPath("$.fieldErrors[0].field").value("department"));
+	}
+
+	@Test
+	void deleteReturnsNoContent() throws Exception {
+		mockMvc.perform(delete("/employees/1"))
+			.andExpect(status().isNoContent())
+			.andExpect(content().string(""));
+	}
+
+	@Test
+	void deleteReturnsNotFoundWhenEmployeeDoesNotExist() throws Exception {
+		doThrow(new EmployeeNotFoundException(999L))
+			.when(employeeService)
+			.delete(999L);
+
+		mockMvc.perform(delete("/employees/999"))
+			.andExpect(status().isNotFound())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.code").value("EMPLOYEE_NOT_FOUND"))
+			.andExpect(jsonPath("$.message").value("Employee not found. id=999"));
 	}
 }

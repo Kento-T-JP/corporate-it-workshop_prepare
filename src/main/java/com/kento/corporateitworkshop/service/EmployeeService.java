@@ -49,6 +49,13 @@ public class EmployeeService {
 		return toResponse(savedEmployee);
 	}
 
+	public void delete(Long id) {
+		Employee employee = employeeRepository.findById(id)
+			.orElseThrow(() -> new EmployeeNotFoundException(id));
+
+		employeeRepository.delete(employee);
+	}
+
 	private EmployeeResponse toResponse(Employee employee) {
 		return new EmployeeResponse(
 			employee.getId(),

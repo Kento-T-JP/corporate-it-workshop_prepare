@@ -10,6 +10,7 @@ import com.kento.corporateitworkshop.service.EmployeeService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,5 +53,12 @@ public class EmployeeController {
 		@Valid @RequestBody UpdateEmployeeRequest request
 	) {
 		return employeeService.update(id, request);
+	}
+
+	@DeleteMapping("/employees/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		employeeService.delete(id);
+
+		return ResponseEntity.noContent().build();
 	}
 }

@@ -3,6 +3,7 @@ package com.kento.corporateitworkshop.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -97,6 +98,25 @@ class EmployeeServiceTest {
 		when(employeeRepository.findById(999L)).thenReturn(Optional.empty());
 
 		assertThatThrownBy(() -> employeeService.update(999L, request))
+			.isInstanceOf(EmployeeNotFoundException.class)
+			.hasMessage("Employee not found. id=999");
+	}
+
+	@Test
+	void deleteRemovesEmployee() {
+		Employee employee = new Employee("Mario", "Corporate IT");
+		when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
+
+		employeeService.delete(1L);
+
+		verify(employeeRepository).delete(employee);
+	}
+
+	@Test
+	void deleteThrowsExceptionWhenEmployeeDoesNotExist() {
+		when(employeeRepository.findById(999L)).thenReturn(Optional.empty());
+
+		assertThatThrownBy(() -> employeeService.delete(999L))
 			.isInstanceOf(EmployeeNotFoundException.class)
 			.hasMessage("Employee not found. id=999");
 	}
